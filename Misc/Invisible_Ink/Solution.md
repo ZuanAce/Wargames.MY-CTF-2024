@@ -30,7 +30,7 @@ def extract_frames(gif_path, output_folder):
             img.save(frame_path)
             print(f"Saved {frame_path}")
 
-extract_frames("gift.gif", "output_frames")
+extract_frames("challenge.gif", "output_frames")
 ```
 However, this time, the script only managed to extract the first few frames. The last three stubbornly refused to cooperate.
 
