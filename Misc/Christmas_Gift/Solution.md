@@ -45,7 +45,8 @@ After extracting the frames, I carefully checked them one by one. Finally, at fr
 ![image](https://github.com/user-attachments/assets/b2318fb4-d032-4c67-b32b-788b9bbc4272)
 
 ## Flag: 
-WGMY{1eaa6da7b7f5df7c0381c8f23af4d3}
+wgmy{1eaa6da7b7f5df6f7c0381c8f23af4d3}
+
 
 
 
