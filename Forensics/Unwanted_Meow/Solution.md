@@ -50,7 +50,7 @@ This time, the image finally displayed correctly, and there it was, the long-awa
 ![image](https://github.com/user-attachments/assets/c4b8ddb4-4e23-4434-87ff-02e44692c107)
 
 ## Flag: 
-WGMY{4a4be40c96ac6314e91d93f38043a634}
+wgmy{4a4be40c96ac6314e91d93f38043a634}
 
 
 
