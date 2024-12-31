@@ -60,7 +60,7 @@ To reveal the hidden content,
 2. Save these two frames.
 
 The final step was to combine the two frames to reveal the complete flag:
-1. Open solvedframe6.bmp in Stegsolve.
+1. Open `solvedframe6.bmp` in Stegsolve.
 2. Navigate to `Analyse` > `Image Combiner` and select `solvedframe5.bmp`.
 3. The combined image displayed the flag clearly in the center!
 
