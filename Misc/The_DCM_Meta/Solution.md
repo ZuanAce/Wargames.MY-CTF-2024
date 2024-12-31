@@ -9,7 +9,7 @@ No idea what a `.dcm` file is, so I used the `file` command to identify the type
 
 ![image](https://github.com/user-attachments/assets/94f17aab-c0a6-41fb-a0a1-bc7839d99dd8)
 
-So, I decided to inspect the file's raw content using xxd. Running xxd revealed this gem:
+So, I decided to inspect the file's raw content using xxd. Running `xxd` revealed this gem:
 
 ![image](https://github.com/user-attachments/assets/e18716d0-43ef-4286-93f8-fdbd880d1059)
 
