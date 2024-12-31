@@ -31,7 +31,7 @@ I applied the [Caesar Cipher](https://www.dcode.fr/caesar-cipher) to the encoded
 ![image](https://github.com/user-attachments/assets/322b2a2a-ebc3-4030-bd4d-ad26287fd78a)
 
 ## Flag: 
-wgmy{b6d180d9c302d8a8daad1f2174a0b212}
+WGMY{b6d180d9c302d8a8daad1f2174a0b212}
 
 
    
