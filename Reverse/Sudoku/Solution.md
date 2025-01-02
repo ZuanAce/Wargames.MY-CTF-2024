@@ -7,8 +7,10 @@
 ## Approach
 Unzip sudoku.zip reveals to file namely `out.enc` and `sudoku`.
 
-Running the `file` command on sudoku does not give much information. I tried opening the file using [Decompiler Explorer](https://dogbolt.org/) and it shows `error: file to large`. 
+`out.enc`:
+`z v7o1 an7570 9d.tl3 7.4b 7n2pws .qodx v7oc ye68u m.7r, t728{09er1bzbs9sx5sosu7719besr39zscbx}`
 
+Running the `file` command on sudoku does not give much information. I tried opening the file using [Decompiler Explorer](https://dogbolt.org/) and it shows `error: file to large`. 
 
 Then, I used the `strings` command, and i found something at the end: `pydata`, seems like the program is definitely compiled using python
 
@@ -43,50 +45,17 @@ Then, i used [Pylingual](https://pylingual.io/) to decompile `sudoku.pyc`:
 
 ![image](https://github.com/user-attachments/assets/1577a2a7-424b-441b-a04a-6112c758485f)
 
+> [!NOTE]
+> This algorithm encrypts a message (the `plaintext`) using a simple substitution cipher:
+> 1. **Alphabet**: A predefined set of characters (`a-z`, numbers, and `.`) that can be used for encryption.
+> 2. **Key Generation**: A random rearrangement of the `alphabet` is created, called the `key`.
+> 3. **Encryption**:
+>     - Each character in the `plaintext` is replaced by its corresponding character from the `key` (based on the original `alphabet`).
+>     - Characters not in the `alphabet` (like spaces or special symbols) remain unchanged.
+> 
+> The result is an encrypted version of the message (`enc`), where the original text is hidden by the substitution.
 
-However, changing the extension to `.jpg` didn’t help at all 🤡🤡🤡🤡🤡. When I tried opening the file, I encountered the error:
-`error interpreting jpeg image file (bogus huffman table definition)`.
-
-![image](https://github.com/user-attachments/assets/60c61d75-563c-40b7-88dd-b878701b03b9)
-
-> [!NOTE]  
-> The error message error interpreting JPEG image file (bogus Huffman table definition) indicates that there might be a corruption or unexpected data in the JPEG file.
-> This is often caused by deliberate manipulation (e.g., in CTF challenges) or a problem with the file itself.
-
-I ran exiftool to dig deeper, and noticed a strange warning: `[minor] Skipped unknown 4 bytes after JPEG APP0 segment`.
-
-![image](https://github.com/user-attachments/assets/2119c425-f635-43a9-909b-69a738f62dfc)
-
-This suggested there was extra, possibly unwanted data in the JPEG file. To understand the warning better, I seeked help from ChatGPT.
-
-> [!NOTE] 
-> What the Warning Means:
-> - JPEG APP0 Segment: This is part of the JPEG header and is typically used to store metadata, such as JFIF (JPEG File Interchange Format) or Exif information.
-> - Unknown Bytes: The extra 4 bytes found in this segment are not standard or expected according to the JPEG specification.
-
-I then used `strings` to extract readable text from the file and, to my surprise, found an endless stream of "meows." It dawned on me: the challenge was named "Unwanted Meow," so maybe removing these "meows" would help restore the file.
-
-![image](https://github.com/user-attachments/assets/01521494-daaf-40fc-9d0c-cc3b2c622367)
-
-Next, I used `sed` to remove all instances of "meow" from the file: `sed 's/meow//g' flag.shredded > cleaned_flag.jpg`
-
-> [!NOTE] 
-> - s/meow//g: Replaces all occurrences of "meow" with nothing (removes them).
-> - cleaned_flag.jpg: The cleaned file without "meow".
-
-After running this command, the image was now visible, but still distorted.
-
-![image](https://github.com/user-attachments/assets/fd2079c9-d2ed-41dc-94ea-277b954e9c99)
-
-A second round of cleaning was needed. I ran the same sed command again on the already cleaned file: `sed 's/meow//g' cleaned_flag.jpg > very_cleaned_flag.jpg`
-
-This time, the image finally displayed correctly, and there it was, the long-awaited flag. 🎉
-
-![image](https://github.com/user-attachments/assets/4979dec0-881f-43b4-beb5-53203dac1ebe)
-
-![image](https://github.com/user-attachments/assets/ce72bde5-20cb-4b99-9e31-f2cf89e23d1f)
-
-recover key:
+Since I have both the plaintext and its encrypted counterpart, you can derive the key by mapping the corresponding characters from the plaintext to the encrypted text. Here’s a script to extract the key:
 ```python
 plaintext = '0 t.e1 qu.c.2 brown3 .ox4 .umps5 over6 t.e7 lazy8 do.9'
 encrypted = 'z v7o1 an7570 9d.tl3 7.4b 7n2pws .qodx v7oc ye68u m.7r'
@@ -107,7 +76,18 @@ def find_key(plaintext, encrypted, alphabet):
 key = find_key(plaintext, encrypted, alphabet)
 print("Recovered Key:", key)
 ```
-decrypt.py:
+> [!NOTE]
+> - Only part of the enc was chosen because REDACTED would be useless in this case
+> - The script iterates over plaintext and encrypted simultaneously using zip.
+> - For each pair of characters, if the plaintext character is in the alphabet, it maps the plaintext character to the encrypted character.
+> - The script constructs the key by ordering the characters in the alphabet sequence using the key_map.
+> - Any missing mappings are replaced with ? in the key.
+
+Running the script gives us the recivered key: `e95moy2l.padwvnqt486103bsxcurz7`
+
+![image](https://github.com/user-attachments/assets/c9971d9b-b0ef-46ec-a589-e3a9bd208b7e)
+
+After recovering the key, it's time to decrypt the encrypted message. Here's the script for the decryption:
 ```python
 alphabet = 'abcdelmnopqrstuvwxyz1234567890.'
 key = 'e95moy2l.padwvnqt486103bsxcurz7'
@@ -126,6 +106,30 @@ decrypted_text = decrypt(encrypted, key, alphabet)
 
 print("Decrypted Text:", decrypted_text)
 ```
+
+> [!NOTE]
+> Reverse Key Mapping:
+> - A reverse_key_map dictionary is created where each character in the key maps to the corresponding character in the alphabet.
+>
+> Decryption Process:
+> - Iterate through each character in the encrypted text.
+> - If the character exists in the key, replace it with the corresponding character from the alphabet.
+> - If the character does not exist in the key (e.g., spaces, punctuation), keep it unchanged.
+>
+> Decrypted Output:
+> - The decrypted text should match the original plaintext.
+
+Running the script, making the flag looks visible: `w.my{2ba914045b56c5e58..1b4a593b05746}`
+
+![image](https://github.com/user-attachments/assets/11b6e785-7967-4673-a331-6afcd5a86707)
+
+Looks like we have to fill in the dots.
+From `alphabet = 'abcdelmnopqrstuvwxyz1234567890.'`, we can seee that the missing alphabets `f,g,h,i,j,k`
+
+z v7o1 an7570 9d.tl3 7.4b 7n2pws .qodx v7oc ye68u m.7r, t728{09er1bzbs9sx5sosu7719besr39zscbx}
+0 t.e1 qu.c.2 brown3 .ox4 .umps5 over6 t.e7 lazy8 do.9, w.my{2ba914045b56c5e58..1b4a593b05746}
+fghijk
+
 ## Flag: 
 WGMY{4a4be40c96ac6314e91d93f38043a634}
 
